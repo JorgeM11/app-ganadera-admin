@@ -29,7 +29,8 @@ import {
   ArrowRight, 
   UserPlus, 
   PlusCircle,
-  Clock
+  Clock,
+  Eye
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -320,8 +321,14 @@ export default function DashboardPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <Link href={`/animales/${a.id}`}>
-                              <Button variant="ghost" size="sm" className="text-xs text-[#1B4820] font-bold">
-                                Detalle
+                              <Button
+                                variant="subtle"
+                                size="sm"
+                                className="text-xs font-bold shadow-2xs inline-flex items-center gap-1.5"
+                                title="Ver ficha del animal"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Detalle</span>
                               </Button>
                             </Link>
                           </TableCell>

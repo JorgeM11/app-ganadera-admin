@@ -13,7 +13,7 @@ export default function Tabs({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1.5 p-1.5 bg-neutral-100/90 rounded-2xl border border-neutral-200/60 overflow-x-auto max-w-full',
+        'inline-flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 bg-neutral-100/90 rounded-2xl border border-neutral-200/60 overflow-x-auto max-w-full scrollbar-none',
         className
       )}
     >
@@ -27,7 +27,7 @@ export default function Tabs({
             type="button"
             onClick={() => onChange(tab.id)}
             className={cn(
-              'relative flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer select-none whitespace-nowrap',
+              'relative flex items-center justify-center gap-1 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider transition-colors cursor-pointer select-none whitespace-nowrap',
               isActive
                 ? 'text-[#1B4820]'
                 : 'text-neutral-500 hover:text-neutral-900 hover:bg-white/40'
@@ -40,13 +40,13 @@ export default function Tabs({
                 transition={{ type: 'spring', stiffness: 450, damping: 32 }}
               />
             )}
-            <span className="relative z-10 flex items-center gap-2">
-              {Icon && <Icon className="w-3.5 h-3.5" />}
+            <span className="relative z-10 flex items-center gap-1 sm:gap-1.5">
+              {Icon && <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
               <span>{tab.label}</span>
               {tab.count !== undefined && (
                 <span
                   className={cn(
-                    'text-[10px] px-1.5 py-0.2 rounded-full font-black',
+                    'text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded-full font-black leading-none',
                     isActive ? 'bg-[#EEF7EE] text-[#1B4820]' : 'bg-neutral-200 text-neutral-600'
                   )}
                 >

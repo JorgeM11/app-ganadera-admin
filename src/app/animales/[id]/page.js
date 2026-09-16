@@ -23,6 +23,7 @@ import Select from '@/components/rareui/Select';
 import ConfirmModal from '@/components/rareui/ConfirmModal';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, calculateAge, formatWeight } from '@/lib/utils';
+import { CATTLE_BREEDS } from '@/lib/constants';
 import { sileo } from 'sileo';
 import {
   ArrowLeft,
@@ -155,6 +156,15 @@ export default function AnimalDetailPage({ params }) {
       setIsLoading(false);
     }
   }
+
+  // Breeds list with fallback for existing custom values
+  const breedOptions = useMemo(() => {
+    const list = [...CATTLE_BREEDS];
+    if (editFormData.breed && !list.includes(editFormData.breed)) {
+      list.unshift(editFormData.breed);
+    }
+    return list.map(b => ({ value: b, label: b }));
+  }, [editFormData.breed]);
 
   // Open Edit Main Animal
   function handleOpenEditMain() {
@@ -1025,14 +1035,11 @@ export default function AnimalDetailPage({ params }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Raza
-              </label>
-              <input
-                type="text"
-                value={editFormData.breed || ''}
-                onChange={(e) => setEditFormData({ ...editFormData, breed: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-medium outline-none focus:border-[#1B4820] focus:bg-white transition-all"
+              <Select
+                label="Raza"
+                value={editFormData.breed || 'Mestizo'}
+                onChange={(val) => setEditFormData({ ...editFormData, breed: val })}
+                options={breedOptions}
               />
             </div>
 
