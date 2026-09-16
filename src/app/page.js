@@ -126,7 +126,7 @@ export default function DashboardPage() {
             Panel de Control Central
           </h2>
           <p className="text-xs sm:text-sm text-emerald-100/80 font-medium">
-            Supervisa en tiempo real las operaciones de todos los usuarios, predios ganaderos y rebaños registrados en el sistema.
+            Supervisa en tiempo real las operaciones de todos los usuarios, fincas y rebaños registrados en el sistema.
           </p>
         </div>
 
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           <StatCard
             title="Fincas Registradas"
             value={stats.farmsCount}
-            subtitle="Predios en el sistema"
+            subtitle="Fincas en el sistema"
             icon={Building2}
             color="blue"
           />

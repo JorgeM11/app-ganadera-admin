@@ -277,10 +277,10 @@ function FincasContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-black text-neutral-900 tracking-tight">
-            Fincas y Predios
+            Fincas Ganaderas
           </h2>
           <p className="text-xs sm:text-sm text-neutral-500 font-medium">
-            Supervisa los predios ganaderos registrados por todos los usuarios del sistema.
+            Supervisa las fincas registradas por todos los usuarios del sistema.
           </p>
         </div>
 
@@ -462,12 +462,12 @@ function FincasContent() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingFarm ? 'Editar Finca' : 'Registrar Nueva Finca'}
-        description="Ingresa los datos del predio ganadero y asigna el propietario."
+        description="Ingresa los datos de la finca y asigna el propietario."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-              Nombre de la Finca / Predio
+              Nombre de la Finca
             </label>
             <input
               type="text"
@@ -512,7 +512,7 @@ function FincasContent() {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Notas sobre potreros, capacidad o características del predio..."
+              placeholder="Notas sobre potreros, capacidad o características de la finca..."
               rows={3}
               className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-medium outline-none focus:border-[#1B4820] focus:bg-white transition-all resize-none"
             />
@@ -549,7 +549,7 @@ function FincasContent() {
         onClose={() => setFarmToDelete(null)}
         onConfirm={handleConfirmDelete}
         title={`¿Eliminar finca "${farmToDelete?.name}"?`}
-        description="Esta acción desvinculará el predio del sistema. Los animales asociados conservarán su información pero quedarán sin finca asignada."
+        description="Esta acción desvinculará la finca del sistema. Los animales asociados conservarán su información pero quedarán sin finca asignada."
         confirmText="Eliminar Finca"
         variant="danger"
       />

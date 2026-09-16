@@ -695,7 +695,7 @@ export default function UsuariosPage() {
                         <p className="font-bold text-neutral-800">{f.name}</p>
                         <p className="text-neutral-400">{f.location || 'Sin ubicación'}</p>
                       </div>
-                      <Badge variant="neutral" size="sm">Predio</Badge>
+                      <Badge variant="neutral" size="sm">Finca</Badge>
                     </div>
                   ))}
                 </div>
