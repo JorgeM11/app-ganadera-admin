@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# App Ganadera - Portal Web Administrativo (Admin)
 
-## Getting Started
+Portal web administrativo para la supervisión global, auditoría y gestión integral del sistema **App Ganadera V2**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🎯 Propósito
+Este sistema es una aplicación **100% Web** construida con **Next.js 16**, **Tailwind CSS v4** y componentes inspirados en **Rare UI** y **Boneyard Skeletons**. 
+Permite a los administradores del sistema:
+1. **Supervisión Global (Dashboard)**: Métricas consolidadas en tiempo real (total de usuarios, fincas, animales, producción lechera acumulada y tratamientos sanitarios).
+2. **Control de Usuarios**:
+   - Visualización tabular de todas las cuentas registradas.
+   - Creación y edición de usuarios (nombre, correo, rol, contraseña cifrada con SHA-256).
+   - Habilitación / Deshabilitación inmediata de cuentas con un solo clic.
+   - Inspección rápida en panel lateral (Drawer) con las fincas y ganado asociados al usuario.
+3. **Gestión de Fincas**:
+   - Tabla general de todos los predios de todos los usuarios.
+   - Filtro reactivo por propietario.
+   - Creación, edición y reasignación de fincas.
+4. **Gestión Integral de Ganado & Ficha Detallada**:
+   - Inventario maestro de todos los ejemplares con filtros por sexo, estado, finca y dueño.
+   - **Ficha de Detalle y Edición Profunda (`/animales/[id]`)**:
+     - Edición de características generales (número, sexo, raza, pureza, color, estado, finca, observaciones).
+     - Historial de Pesajes & Crecimiento (`growth_events`) con adición, edición y eliminación.
+     - Historial Sanitario (`health_records`) con adición, edición y eliminación.
+     - Historial Reproductivo (`services` y `pregnancy_checks`).
+     - Control Lechero (`milking_records`) con adición, edición y cálculo de acumulados.
+
+---
+
+## 🛠️ Stack Tecnológico
+- **Framework**: Next.js 16 (App Router, JavaScript)
+- **Estilos**: Tailwind CSS v4 con paleta institucional "Pastoral Editorial" (`#1B4820`, `#143416`, `#F6F8F4`)
+- **Componentes UI**: Inspirados en **Rare UI** (Badges animados con live pulse, StatCards con orbes luminosos, Modals y Drawers elásticos con `framer-motion`)
+- **Skeletons**: Diseñados bajo la arquitectura **Boneyard** (`boneyard-js` & `BoneyardSkeleton.jsx`)
+- **Backend**: Supabase Cloud (compartiendo exactamente la misma base de datos PostgreSQL y tablas de `App-ganadera-v2`)
+- **Seguridad**: Cifrado SHA-256 nativo mediante Web Crypto API
+
+---
+
+## 🚀 Puesta en Marcha
+
+### 1. Variables de Entorno (`.env.local`)
+El archivo `.env.local` ya se encuentra configurado con la conexión a Supabase:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://awippxgsdwonspjxkmlr.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Ejecutar en Modo Desarrollo
+```bash
+npm run dev
+```
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 3. Credenciales de Acceso por Defecto
+- **Correo**: `admin@campo.com`
+- **Contraseña**: `admin123`
+- **Rol requerido**: `admin`
+- **Estado requerido**: `Activo`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Compilar para Producción
+```bash
+npm run build
+npm start
+```
