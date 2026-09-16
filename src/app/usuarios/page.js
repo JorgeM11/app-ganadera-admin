@@ -23,6 +23,7 @@ import {
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
 import Select from '@/components/rareui/Select';
 import Switch from '@/components/rareui/Switch';
+import ConfirmModal from '@/components/rareui/ConfirmModal';
 import { supabase } from '@/lib/supabaseClient';
 import { hashPassword } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
@@ -62,6 +63,11 @@ export default function UsuariosPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [selectedUserDrawer, setSelectedUserDrawer] = useState(null);
   const [drawerData, setDrawerData] = useState({ farms: [], animals: [], loading: false });
+  const [statusModal, setStatusModal] = useState({
+    isOpen: false,
+    user: null,
+    nextStatus: null,
+  });
 
   // Form states
   const [formData, setFormData] = useState({
@@ -161,14 +167,20 @@ export default function UsuariosPage() {
     }
   }
 
-  // Toggle user status (Enable / Disable)
-  async function handleToggleStatus(user) {
+  // Open confirm modal to toggle status
+  function handleToggleStatus(user) {
     const nextStatus = user.status === 'Activo' ? 'Inactivo' : 'Activo';
-    const confirmText = nextStatus === 'Inactivo' 
-      ? `¿Estás seguro de deshabilitar la cuenta de ${user.name || user.email}? El usuario no podrá acceder.`
-      : `¿Deseas habilitar la cuenta de ${user.name || user.email}?`;
+    setStatusModal({
+      isOpen: true,
+      user,
+      nextStatus,
+    });
+  }
 
-    if (!window.confirm(confirmText)) return;
+  // Handle Confirm Toggle user status
+  async function handleConfirmToggleStatus() {
+    if (!statusModal.user) return;
+    const { user, nextStatus } = statusModal;
 
     try {
       const { error } = await supabase
@@ -195,6 +207,8 @@ export default function UsuariosPage() {
         title: 'Error al cambiar estado',
         description: err.message
       });
+    } finally {
+      setStatusModal({ isOpen: false, user: null, nextStatus: null });
     }
   }
 
@@ -747,6 +761,21 @@ export default function UsuariosPage() {
           </div>
         )}
       </Drawer>
+
+      {/* Modal: Confirm Status Change */}
+      <ConfirmModal
+        isOpen={statusModal.isOpen}
+        onClose={() => setStatusModal({ isOpen: false, user: null, nextStatus: null })}
+        onConfirm={handleConfirmToggleStatus}
+        title={statusModal.nextStatus === 'Inactivo' ? '¿Deshabilitar Usuario?' : '¿Habilitar Usuario?'}
+        description={
+          statusModal.nextStatus === 'Inactivo'
+            ? `Se suspenderá la cuenta de ${statusModal.user?.name || statusModal.user?.email}. El usuario no podrá ingresar ni sincronizar información.`
+            : `Se reactivará la cuenta de ${statusModal.user?.name || statusModal.user?.email}. El usuario podrá acceder normalmente al sistema.`
+        }
+        confirmText={statusModal.nextStatus === 'Inactivo' ? 'Deshabilitar' : 'Habilitar'}
+        variant={statusModal.nextStatus === 'Inactivo' ? 'danger' : 'primary'}
+      />
     </AdminShell>
   );
 }

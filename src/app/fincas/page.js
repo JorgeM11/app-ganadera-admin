@@ -21,6 +21,7 @@ import {
 } from '@/components/rareui/Table';
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
 import Select from '@/components/rareui/Select';
+import ConfirmModal from '@/components/rareui/ConfirmModal';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate } from '@/lib/utils';
 import { sileo } from 'sileo';
@@ -55,6 +56,7 @@ function FincasContent() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFarm, setEditingFarm] = useState(null);
+  const [farmToDelete, setFarmToDelete] = useState(null);
   const [formData, setFormData] = useState({
     user_id: '',
     name: '',
@@ -237,31 +239,35 @@ function FincasContent() {
     }
   }
 
-  // Handle Soft Delete
-  async function handleDelete(farm) {
-    if (!window.confirm(`¿Estás seguro de eliminar la finca "${farm.name}"? Los animales asociados quedarán sin finca asignada.`)) {
-      return;
-    }
+  // Prompt Soft Delete
+  function handleDelete(farm) {
+    setFarmToDelete(farm);
+  }
 
+  // Handle Confirm Soft Delete
+  async function handleConfirmDelete() {
+    if (!farmToDelete) return;
     try {
       const now = new Date().toISOString();
       const { error } = await supabase
         .from('farms')
         .update({ deleted_at: now, updated_at: now })
-        .eq('id', farm.id);
+        .eq('id', farmToDelete.id);
 
       if (error) throw error;
 
-      setFarms(prev => prev.filter(f => f.id !== farm.id));
+      setFarms(prev => prev.filter(f => f.id !== farmToDelete.id));
       sileo.success({
         title: 'Finca Eliminada',
-        description: `Se eliminó la finca "${farm.name}".`
+        description: `Se eliminó la finca "${farmToDelete.name}".`
       });
     } catch (err) {
       sileo.error({
         title: 'Error al eliminar finca',
         description: err.message
       });
+    } finally {
+      setFarmToDelete(null);
     }
   }
 
@@ -536,6 +542,17 @@ function FincasContent() {
           </div>
         </form>
       </Modal>
+
+      {/* Modal: Confirm Delete Farm */}
+      <ConfirmModal
+        isOpen={!!farmToDelete}
+        onClose={() => setFarmToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title={`¿Eliminar finca "${farmToDelete?.name}"?`}
+        description="Esta acción desvinculará el predio del sistema. Los animales asociados conservarán su información pero quedarán sin finca asignada."
+        confirmText="Eliminar Finca"
+        variant="danger"
+      />
     </AdminShell>
   );
 }

@@ -20,6 +20,7 @@ import {
 } from '@/components/rareui/Table';
 import { BoneyardDetailsSkeleton } from '@/components/ui/BoneyardSkeleton';
 import Select from '@/components/rareui/Select';
+import ConfirmModal from '@/components/rareui/ConfirmModal';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, calculateAge, formatWeight } from '@/lib/utils';
 import { sileo } from 'sileo';
@@ -77,6 +78,14 @@ export default function AnimalDetailPage({ params }) {
   const [serviceModal, setServiceModal] = useState({ open: false, data: null });
   const [checkModal, setCheckModal] = useState({ open: false, data: null });
   const [milkingModal, setMilkingModal] = useState({ open: false, data: null });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    description: '',
+    confirmText: 'Eliminar',
+    variant: 'danger',
+    onConfirm: null,
+  });
 
   useEffect(() => {
     if (animalId) loadAnimalDetails();
@@ -251,22 +260,30 @@ export default function AnimalDetailPage({ params }) {
     }
   }
 
-  async function handleDeleteGrowthEvent(id) {
-    if (!window.confirm('¿Eliminar este evento de crecimiento?')) return;
-    try {
-      const { error } = await supabase.from('growth_events').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-      if (error) throw error;
-      setGrowthEvents(prev => prev.filter(e => e.id !== id));
-      sileo.success({
-        title: 'Evento retirado',
-        description: 'El evento de evolución corporal fue eliminado.'
-      });
-    } catch (err) {
-      sileo.error({
-        title: 'Error al eliminar',
-        description: err.message || 'No se pudo retirar el evento.'
-      });
-    }
+  function handleDeleteGrowthEvent(id) {
+    setConfirmModal({
+      isOpen: true,
+      title: '¿Eliminar evento de crecimiento?',
+      description: 'Esta medición física y su evolución corporal se retirarán del historial del animal.',
+      confirmText: 'Eliminar Evento',
+      variant: 'danger',
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.from('growth_events').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+          if (error) throw error;
+          setGrowthEvents(prev => prev.filter(e => e.id !== id));
+          sileo.success({
+            title: 'Evento retirado',
+            description: 'El evento de evolución corporal fue eliminado.'
+          });
+        } catch (err) {
+          sileo.error({
+            title: 'Error al eliminar',
+            description: err.message || 'No se pudo retirar el evento.'
+          });
+        }
+      }
+    });
   }
 
   // --- SUB-RECORDS HANDLERS (HEALTH RECORDS) ---
@@ -308,22 +325,30 @@ export default function AnimalDetailPage({ params }) {
     }
   }
 
-  async function handleDeleteHealthRecord(id) {
-    if (!window.confirm('¿Eliminar este registro médico?')) return;
-    try {
-      const { error } = await supabase.from('health_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-      if (error) throw error;
-      setHealthRecords(prev => prev.filter(r => r.id !== id));
-      sileo.success({
-        title: 'Tratamiento eliminado',
-        description: 'El registro médico ha sido retirado del historial.'
-      });
-    } catch (err) {
-      sileo.error({
-        title: 'Error al eliminar',
-        description: err.message || 'No se pudo eliminar el registro médico.'
-      });
-    }
+  function handleDeleteHealthRecord(id) {
+    setConfirmModal({
+      isOpen: true,
+      title: '¿Eliminar tratamiento médico?',
+      description: 'Se retirará este registro de aplicación del carnet sanitario del animal.',
+      confirmText: 'Eliminar Tratamiento',
+      variant: 'danger',
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.from('health_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+          if (error) throw error;
+          setHealthRecords(prev => prev.filter(r => r.id !== id));
+          sileo.success({
+            title: 'Tratamiento eliminado',
+            description: 'El registro médico ha sido retirado del historial.'
+          });
+        } catch (err) {
+          sileo.error({
+            title: 'Error al eliminar',
+            description: err.message || 'No se pudo eliminar el registro médico.'
+          });
+        }
+      }
+    });
   }
 
   // --- SUB-RECORDS HANDLERS (MILKING RECORDS) ---
@@ -366,22 +391,30 @@ export default function AnimalDetailPage({ params }) {
     }
   }
 
-  async function handleDeleteMilkingRecord(id) {
-    if (!window.confirm('¿Eliminar este registro de ordeño?')) return;
-    try {
-      const { error } = await supabase.from('milking_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-      if (error) throw error;
-      setMilkingRecords(prev => prev.filter(r => r.id !== id));
-      sileo.success({
-        title: 'Ordeño eliminado',
-        description: 'El registro de producción lechera fue retirado.'
-      });
-    } catch (err) {
-      sileo.error({
-        title: 'Error al eliminar',
-        description: err.message || 'No se pudo eliminar el registro de ordeño.'
-      });
-    }
+  function handleDeleteMilkingRecord(id) {
+    setConfirmModal({
+      isOpen: true,
+      title: '¿Eliminar registro de ordeño?',
+      description: 'El registro de pesaje de leche será retirado de las estadísticas de producción.',
+      confirmText: 'Eliminar Ordeño',
+      variant: 'danger',
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.from('milking_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+          if (error) throw error;
+          setMilkingRecords(prev => prev.filter(r => r.id !== id));
+          sileo.success({
+            title: 'Ordeño eliminado',
+            description: 'El registro de producción lechera fue retirado.'
+          });
+        } catch (err) {
+          sileo.error({
+            title: 'Error al eliminar',
+            description: err.message || 'No se pudo eliminar el registro de ordeño.'
+          });
+        }
+      }
+    });
   }
 
   // Tab definitions
@@ -1216,6 +1249,17 @@ export default function AnimalDetailPage({ params }) {
           </div>
         </form>
       </Modal>
+
+      {/* Modal: Confirmation for sub-record deletions */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        description={confirmModal.description}
+        confirmText={confirmModal.confirmText}
+        variant={confirmModal.variant}
+      />
     </AdminShell>
   );
 }

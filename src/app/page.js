@@ -294,18 +294,13 @@ export default function DashboardPage() {
                       return (
                         <TableRow key={a.id}>
                           <TableCell>
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-xl bg-neutral-100 flex items-center justify-center font-black text-xs text-neutral-700 shrink-0 border border-neutral-200">
+                            <div>
+                              <span className="font-black text-neutral-900 text-sm">
                                 #{a.number}
-                              </div>
-                              <div>
-                                <span className="font-bold text-neutral-900">
-                                  #{a.number}
-                                </span>
-                                <span className="ml-1 text-[10px] font-bold text-neutral-400">
-                                  ({a.sex})
-                                </span>
-                              </div>
+                              </span>
+                              <span className="ml-1.5 text-[10px] font-bold text-neutral-400 uppercase">
+                                ({a.sex})
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell>

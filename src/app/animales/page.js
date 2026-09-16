@@ -303,33 +303,7 @@ function AnimalesContent() {
     }
   }
 
-  // Handle Soft Delete
-  async function handleDelete(animal) {
-    if (!window.confirm(`¿Estás seguro de eliminar el animal #${animal.number}? Esta acción se reflejará en todo el sistema.`)) {
-      return;
-    }
 
-    try {
-      const now = new Date().toISOString();
-      const { error } = await supabase
-        .from('animals')
-        .update({ deleted_at: now, updated_at: now })
-        .eq('id', animal.id);
-
-      if (error) throw error;
-
-      setAnimals(prev => prev.filter(a => a.id !== animal.id));
-      sileo.success({
-        title: 'Animal eliminado',
-        description: `El animal #${animal.number} ha sido retirado del sistema.`
-      });
-    } catch (err) {
-      sileo.error({
-        title: 'Error al eliminar',
-        description: err.message || 'No se pudo retirar el animal.'
-      });
-    }
-  }
 
   const sexTabs = [
     { id: 'ALL', label: 'Todos', count: animals.length },
@@ -490,22 +464,13 @@ function AnimalesContent() {
                     <TableRow key={animal.id}>
                       {/* Number and Sex */}
                       <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 font-black text-sm border shadow-2xs ${
-                            isFemale 
-                              ? 'bg-pink-50 text-pink-700 border-pink-100' 
-                              : 'bg-blue-50 text-blue-700 border-blue-100'
-                          }`}>
+                        <div>
+                          <span className="font-black text-neutral-900 text-sm block">
                             #{animal.number}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-bold text-neutral-900 truncate">
-                              #{animal.number}
-                            </p>
-                            <span className="text-[10px] font-bold text-neutral-400 uppercase">
-                              {animal.sex}
-                            </span>
-                          </div>
+                          </span>
+                          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                            {animal.sex}
+                          </span>
                         </div>
                       </TableCell>
 
