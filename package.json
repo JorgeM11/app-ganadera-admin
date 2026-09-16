@@ -18,6 +18,7 @@
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "sileo": "^0.1.5",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {

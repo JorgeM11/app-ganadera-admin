@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { getAdminSession, clearAdminSession } from '@/lib/auth';
+import { sileo } from 'sileo';
 
 const AuthContext = createContext({
   user: null,
@@ -29,6 +30,10 @@ export function AuthProvider({ children }) {
   const logout = () => {
     clearAdminSession();
     setUser(null);
+    sileo.info({
+      title: 'Sesión finalizada',
+      description: 'Has cerrado sesión del panel administrativo.'
+    });
     router.push('/login');
   };
 

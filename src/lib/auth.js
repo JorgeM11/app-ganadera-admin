@@ -13,11 +13,11 @@ export async function hashPassword(plainText) {
 }
 
 /**
- * Seeds default admin if database table is empty
+ * Seeds default admin if database table is empty or missing netgenteam
  */
 export async function seedDefaultAdminIfNeeded() {
-  const defaultAdminEmail = 'admin@campo.com';
-  const defaultPass = 'admin123';
+  const defaultAdminEmail = 'netgenteam@gmail.com';
+  const defaultPass = 'net.gen';
   const passHash = await hashPassword(defaultPass);
 
   try {
@@ -29,14 +29,14 @@ export async function seedDefaultAdminIfNeeded() {
 
     if (!error && (!users || users.length === 0)) {
       await supabase.from('usuarios').insert({
-        id: '00000000-0000-0000-0000-000000000001',
-        name: 'Administrador Principal',
+        id: '00000000-0000-0000-0000-000000000002',
+        name: 'NetGen Team',
         email: defaultAdminEmail,
         password_hash: passHash,
         role: 'admin',
         status: 'Activo'
       });
-      console.log('[Admin Auth] Usuario admin por defecto creado en Supabase.');
+      console.log('[Admin Auth] Usuario netgenteam@gmail.com admin creado en Supabase.');
     }
   } catch (err) {
     console.warn('[Admin Auth] Error verificando admin por defecto:', err.message);

@@ -21,6 +21,7 @@ import {
 import { BoneyardDetailsSkeleton } from '@/components/ui/BoneyardSkeleton';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, calculateAge, formatWeight } from '@/lib/utils';
+import { sileo } from 'sileo';
 import {
   ArrowLeft,
   Pencil,
@@ -193,9 +194,16 @@ export default function AnimalDetailPage({ params }) {
 
       setAnimal(prev => ({ ...prev, ...updatePayload }));
       setIsEditMainOpen(false);
+      sileo.success({
+        title: 'Animal actualizado',
+        description: `Ficha del ejemplar #${updatePayload.number} guardada correctamente.`
+      });
       loadAnimalDetails(); // refresh related fields
     } catch (err) {
-      alert('Error al guardar datos principales: ' + err.message);
+      sileo.error({
+        title: 'Error al actualizar',
+        description: err.message || 'No se pudieron guardar los datos.'
+      });
     } finally {
       setIsSaving(false);
     }
@@ -229,16 +237,35 @@ export default function AnimalDetailPage({ params }) {
         await supabase.from('growth_events').insert(payload);
       }
       setEventModal({ open: false, data: null });
+      sileo.success({
+        title: eventId ? 'Evento actualizado' : 'Pesaje registrado',
+        description: 'El evento de evolución corporal ha sido guardado.'
+      });
       loadAnimalDetails();
     } catch (err) {
-      alert('Error guardando evento de crecimiento: ' + err.message);
+      sileo.error({
+        title: 'Error al registrar evento',
+        description: err.message || 'No se pudo guardar el evento de crecimiento.'
+      });
     }
   }
 
   async function handleDeleteGrowthEvent(id) {
     if (!window.confirm('¿Eliminar este evento de crecimiento?')) return;
-    await supabase.from('growth_events').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-    setGrowthEvents(prev => prev.filter(e => e.id !== id));
+    try {
+      const { error } = await supabase.from('growth_events').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+      if (error) throw error;
+      setGrowthEvents(prev => prev.filter(e => e.id !== id));
+      sileo.success({
+        title: 'Evento retirado',
+        description: 'El evento de evolución corporal fue eliminado.'
+      });
+    } catch (err) {
+      sileo.error({
+        title: 'Error al eliminar',
+        description: err.message || 'No se pudo retirar el evento.'
+      });
+    }
   }
 
   // --- SUB-RECORDS HANDLERS (HEALTH RECORDS) ---
@@ -267,16 +294,35 @@ export default function AnimalDetailPage({ params }) {
         await supabase.from('health_records').insert(payload);
       }
       setHealthModal({ open: false, data: null });
+      sileo.success({
+        title: recordId ? 'Tratamiento actualizado' : 'Tratamiento aplicado',
+        description: `Medicamento ${payload.product_name} registrado en el historial sanitario.`
+      });
       loadAnimalDetails();
     } catch (err) {
-      alert('Error guardando registro médico: ' + err.message);
+      sileo.error({
+        title: 'Error al guardar tratamiento',
+        description: err.message || 'No se pudo registrar la aplicación del producto.'
+      });
     }
   }
 
   async function handleDeleteHealthRecord(id) {
     if (!window.confirm('¿Eliminar este registro médico?')) return;
-    await supabase.from('health_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-    setHealthRecords(prev => prev.filter(r => r.id !== id));
+    try {
+      const { error } = await supabase.from('health_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+      if (error) throw error;
+      setHealthRecords(prev => prev.filter(r => r.id !== id));
+      sileo.success({
+        title: 'Tratamiento eliminado',
+        description: 'El registro médico ha sido retirado del historial.'
+      });
+    } catch (err) {
+      sileo.error({
+        title: 'Error al eliminar',
+        description: err.message || 'No se pudo eliminar el registro médico.'
+      });
+    }
   }
 
   // --- SUB-RECORDS HANDLERS (MILKING RECORDS) ---
@@ -306,16 +352,35 @@ export default function AnimalDetailPage({ params }) {
         await supabase.from('milking_records').insert(payload);
       }
       setMilkingModal({ open: false, data: null });
+      sileo.success({
+        title: recordId ? 'Ordeño actualizado' : 'Ordeño registrado',
+        description: `Pesaje de ${payload.liters} L registrado exitosamente.`
+      });
       loadAnimalDetails();
     } catch (err) {
-      alert('Error guardando registro de ordeño: ' + err.message);
+      sileo.error({
+        title: 'Error al guardar ordeño',
+        description: err.message || 'No se pudo guardar el registro de producción.'
+      });
     }
   }
 
   async function handleDeleteMilkingRecord(id) {
     if (!window.confirm('¿Eliminar este registro de ordeño?')) return;
-    await supabase.from('milking_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
-    setMilkingRecords(prev => prev.filter(r => r.id !== id));
+    try {
+      const { error } = await supabase.from('milking_records').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+      if (error) throw error;
+      setMilkingRecords(prev => prev.filter(r => r.id !== id));
+      sileo.success({
+        title: 'Ordeño eliminado',
+        description: 'El registro de producción lechera fue retirado.'
+      });
+    } catch (err) {
+      sileo.error({
+        title: 'Error al eliminar',
+        description: err.message || 'No se pudo eliminar el registro de ordeño.'
+      });
+    }
   }
 
   // Tab definitions

@@ -24,6 +24,7 @@ import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
 import { supabase } from '@/lib/supabaseClient';
 import { hashPassword } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
+import { sileo } from 'sileo';
 import {
   UserPlus,
   Pencil,
@@ -169,8 +170,22 @@ export default function UsuariosPage() {
       if (error) throw error;
 
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: nextStatus } : u));
+      if (nextStatus === 'Activo') {
+        sileo.success({
+          title: 'Cuenta Habilitada',
+          description: `El usuario ${user.name || user.email} ahora tiene acceso activo.`
+        });
+      } else {
+        sileo.warning({
+          title: 'Cuenta Deshabilitada',
+          description: `Se suspendió el acceso a ${user.name || user.email}.`
+        });
+      }
     } catch (err) {
-      alert('Error actualizando estado del usuario: ' + err.message);
+      sileo.error({
+        title: 'Error al cambiar estado',
+        description: err.message
+      });
     }
   }
 
@@ -207,6 +222,7 @@ export default function UsuariosPage() {
     e.preventDefault();
     if (!formData.email.trim()) {
       setFormError('El correo electrónico es requerido.');
+      sileo.warning({ title: 'Campo requerido', description: 'Ingresa un correo válido.' });
       return;
     }
 
@@ -239,10 +255,15 @@ export default function UsuariosPage() {
 
         setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, ...updatePayload } : u));
         setIsCreateModalOpen(false);
+        sileo.success({
+          title: 'Usuario Actualizado',
+          description: `Se guardaron los cambios de ${updatePayload.name}.`
+        });
       } else {
         // CREATE
         if (!formData.password.trim()) {
           setFormError('La contraseña es obligatoria para un nuevo usuario.');
+          sileo.warning({ title: 'Contraseña requerida', description: 'Ingresa una contraseña para la cuenta.' });
           setIsSaving(false);
           return;
         }
@@ -269,9 +290,17 @@ export default function UsuariosPage() {
 
         setUsers(prev => [insertPayload, ...prev]);
         setIsCreateModalOpen(false);
+        sileo.success({
+          title: 'Usuario Registrado',
+          description: `Cuenta creada exitosamente para ${insertPayload.email}.`
+        });
       }
     } catch (err) {
       setFormError(err.message || 'Error al guardar usuario.');
+      sileo.error({
+        title: 'Error al procesar usuario',
+        description: err.message
+      });
     } finally {
       setIsSaving(false);
     }

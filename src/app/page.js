@@ -90,7 +90,7 @@ export default function DashboardPage() {
       const totalLiters = milking.reduce((acc, r) => acc + (Number(r.liters) || 0), 0);
       const activeAnimals = animals.filter(a => a.status === 'Activo').length;
       const femaleCows = animals.filter(a => a.sex === 'Hembra').length;
-      const activeUsers = users.filter(u => u.status === 'Activo').length;
+      const activeUsersCount = users.filter(u => u.status === 'Activo').length;
 
       setStats({
         usersCount: users.length,

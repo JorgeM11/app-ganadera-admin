@@ -22,6 +22,7 @@ import {
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate } from '@/lib/utils';
+import { sileo } from 'sileo';
 import {
   Building2,
   Plus,
@@ -159,10 +160,12 @@ function FincasContent() {
     e.preventDefault();
     if (!formData.name.trim()) {
       setFormError('El nombre de la finca es obligatorio.');
+      sileo.warning({ title: 'Campo requerido', description: 'El nombre de la finca es obligatorio.' });
       return;
     }
     if (!formData.user_id) {
       setFormError('Debes asignar un usuario propietario para la finca.');
+      sileo.warning({ title: 'Propietario requerido', description: 'Debes asignar un usuario para la finca.' });
       return;
     }
 
@@ -191,6 +194,10 @@ function FincasContent() {
 
         setFarms(prev => prev.map(f => f.id === editingFarm.id ? { ...f, ...updatePayload } : f));
         setIsModalOpen(false);
+        sileo.success({
+          title: 'Finca Actualizada',
+          description: `Se guardaron los cambios para "${updatePayload.name}".`
+        });
       } else {
         // CREATE
         const newId = globalThis.crypto.randomUUID();
@@ -213,9 +220,17 @@ function FincasContent() {
 
         setFarms(prev => [insertPayload, ...prev]);
         setIsModalOpen(false);
+        sileo.success({
+          title: 'Finca Creada',
+          description: `Se registró la finca "${insertPayload.name}" exitosamente.`
+        });
       }
     } catch (err) {
       setFormError(err.message || 'Error al guardar la finca.');
+      sileo.error({
+        title: 'Error al procesar finca',
+        description: err.message
+      });
     } finally {
       setIsSaving(false);
     }
@@ -237,8 +252,15 @@ function FincasContent() {
       if (error) throw error;
 
       setFarms(prev => prev.filter(f => f.id !== farm.id));
+      sileo.success({
+        title: 'Finca Eliminada',
+        description: `Se eliminó la finca "${farm.name}".`
+      });
     } catch (err) {
-      alert('Error eliminando finca: ' + err.message);
+      sileo.error({
+        title: 'Error al eliminar finca',
+        description: err.message
+      });
     }
   }
 

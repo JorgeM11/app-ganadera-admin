@@ -7,6 +7,7 @@ import { Tractor, ArrowRight, Mail, Lock, AlertCircle, ShieldCheck } from 'lucid
 import { authenticateAdmin, getAdminSession } from '@/lib/auth';
 import { useAuth } from '@/context/AuthContext';
 import Button from '@/components/rareui/Button';
+import { sileo } from 'sileo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,7 +27,9 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
-      setError('Por favor completa todos los campos.');
+      const msg = 'Por favor completa todos los campos.';
+      setError(msg);
+      sileo.warning({ title: 'Campos Incompletos', description: msg });
       return;
     }
 
@@ -36,22 +39,34 @@ export default function LoginPage() {
     try {
       const result = await authenticateAdmin(email, password);
       if (!result.success) {
-        setError(result.message || 'Credenciales incorrectas.');
+        const msg = result.message || 'Credenciales incorrectas.';
+        setError(msg);
+        sileo.error({ title: 'Acceso Denegado', description: msg });
         return;
       }
+      sileo.success({ 
+        title: '¡Bienvenido al Panel!', 
+        description: `Autenticado como ${result.user.name || result.user.email}` 
+      });
       setUser(result.user);
       router.push('/');
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión.');
+      const msg = err.message || 'Error al iniciar sesión.';
+      setError(msg);
+      sileo.error({ title: 'Error de Servidor', description: msg });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleUseDemoAdmin = () => {
-    setEmail('admin@campo.com');
-    setPassword('admin123');
+    setEmail('netgenteam@gmail.com');
+    setPassword('net.gen');
     setError('');
+    sileo.info({ 
+      title: 'Credenciales de Admin Cargadas', 
+      description: 'netgenteam@gmail.com / net.gen' 
+    });
   };
 
   return (
@@ -98,7 +113,7 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@campo.com"
+                  placeholder="netgenteam@gmail.com"
                   autoComplete="email"
                   required
                   className="w-full bg-transparent outline-none text-sm text-neutral-800 font-medium placeholder:text-neutral-400"
@@ -150,15 +165,15 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Quick Demo Credentials Helper */}
+          {/* Quick Admin Credentials Helper */}
           <div className="mt-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-xs">
-            <span className="text-neutral-400 font-medium">¿Cuenta admin por defecto?</span>
+            <span className="text-neutral-400 font-medium">¿Cuenta admin configurada?</span>
             <button
               type="button"
               onClick={handleUseDemoAdmin}
               className="text-[#1B4820] font-bold hover:underline cursor-pointer"
             >
-              Usar admin@campo.com
+              Usar netgenteam@gmail.com
             </button>
           </div>
         </div>

@@ -23,6 +23,7 @@ import {
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, calculateAge, formatWeight } from '@/lib/utils';
+import { sileo } from 'sileo';
 import {
   Layers,
   Plus,
@@ -205,10 +206,18 @@ function AnimalesContent() {
     e.preventDefault();
     if (!formData.number.trim()) {
       setFormError('El número o código de arete es obligatorio.');
+      sileo.warning({
+        title: 'Campo obligatorio',
+        description: 'El número o arete del animal es requerido.'
+      });
       return;
     }
     if (!formData.user_id) {
       setFormError('Debes asignar un propietario para el animal.');
+      sileo.warning({
+        title: 'Propietario no asignado',
+        description: 'Debes seleccionar el usuario dueño del animal.'
+      });
       return;
     }
 
@@ -244,6 +253,10 @@ function AnimalesContent() {
 
         setAnimals(prev => prev.map(a => a.id === editingAnimal.id ? { ...a, ...updatePayload } : a));
         setIsModalOpen(false);
+        sileo.success({
+          title: 'Animal actualizado',
+          description: `Los datos del ejemplar #${updatePayload.number} fueron guardados.`
+        });
       } else {
         // CREATE
         const newId = globalThis.crypto.randomUUID();
@@ -273,9 +286,17 @@ function AnimalesContent() {
 
         setAnimals(prev => [insertPayload, ...prev]);
         setIsModalOpen(false);
+        sileo.success({
+          title: 'Animal registrado',
+          description: `El ejemplar #${insertPayload.number} fue agregado con éxito.`
+        });
       }
     } catch (err) {
       setFormError(err.message || 'Error al guardar el animal.');
+      sileo.error({
+        title: 'Error al procesar',
+        description: err.message || 'No se pudo guardar la información del animal.'
+      });
     } finally {
       setIsSaving(false);
     }
@@ -297,8 +318,15 @@ function AnimalesContent() {
       if (error) throw error;
 
       setAnimals(prev => prev.filter(a => a.id !== animal.id));
+      sileo.success({
+        title: 'Animal eliminado',
+        description: `El animal #${animal.number} ha sido retirado del sistema.`
+      });
     } catch (err) {
-      alert('Error eliminando animal: ' + err.message);
+      sileo.error({
+        title: 'Error al eliminar',
+        description: err.message || 'No se pudo retirar el animal.'
+      });
     }
   }
 
