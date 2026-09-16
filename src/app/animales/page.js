@@ -21,6 +21,7 @@ import {
   TablePagination,
 } from '@/components/rareui/Table';
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
+import Select from '@/components/rareui/Select';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, calculateAge, formatWeight } from '@/lib/utils';
 import { sileo } from 'sileo';
@@ -386,58 +387,54 @@ function AnimalesContent() {
         </div>
 
         {/* Secondary filters row (User, Farm, Status) */}
-        <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-neutral-100 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex lg:items-center gap-3 pt-3 border-t border-neutral-100 text-xs">
           {/* Filter by User */}
-          <div className="flex items-center gap-1.5">
-            <span className="font-bold text-neutral-400">Dueño:</span>
-            <select
+          <div className="min-w-[180px]">
+            <Select
+              size="sm"
               value={selectedUserFilter}
-              onChange={(e) => {
-                setSelectedUserFilter(e.target.value);
+              onChange={(val) => {
+                setSelectedUserFilter(val);
                 setCurrentPage(1);
               }}
-              className="bg-neutral-50 border border-neutral-200 rounded-xl px-2.5 py-1 text-xs text-neutral-800 font-semibold outline-none focus:border-[#1B4820] cursor-pointer max-w-[160px] truncate"
-            >
-              <option value="ALL">Todos los usuarios</option>
-              {users.map(u => (
-                <option key={u.id} value={u.id}>{u.name || u.email}</option>
-              ))}
-            </select>
+              options={[
+                { value: 'ALL', label: 'Todos los dueños' },
+                ...users.map(u => ({ value: u.id, label: u.name || u.email }))
+              ]}
+            />
           </div>
 
           {/* Filter by Farm */}
-          <div className="flex items-center gap-1.5">
-            <span className="font-bold text-neutral-400">Finca:</span>
-            <select
+          <div className="min-w-[170px]">
+            <Select
+              size="sm"
               value={selectedFarmFilter}
-              onChange={(e) => {
-                setSelectedFarmFilter(e.target.value);
+              onChange={(val) => {
+                setSelectedFarmFilter(val);
                 setCurrentPage(1);
               }}
-              className="bg-neutral-50 border border-neutral-200 rounded-xl px-2.5 py-1 text-xs text-neutral-800 font-semibold outline-none focus:border-[#1B4820] cursor-pointer max-w-[160px] truncate"
-            >
-              <option value="ALL">Todas las fincas</option>
-              {farms.map(f => (
-                <option key={f.id} value={f.id}>{f.name}</option>
-              ))}
-            </select>
+              options={[
+                { value: 'ALL', label: 'Todas las fincas' },
+                ...farms.map(f => ({ value: f.id, label: f.name }))
+              ]}
+            />
           </div>
 
           {/* Filter by Status */}
-          <div className="flex items-center gap-1.5">
-            <span className="font-bold text-neutral-400">Estado:</span>
-            <select
+          <div className="min-w-[150px]">
+            <Select
+              size="sm"
               value={selectedStatusFilter}
-              onChange={(e) => {
-                setSelectedStatusFilter(e.target.value);
+              onChange={(val) => {
+                setSelectedStatusFilter(val);
                 setCurrentPage(1);
               }}
-              className="bg-neutral-50 border border-neutral-200 rounded-xl px-2.5 py-1 text-xs text-neutral-800 font-semibold outline-none focus:border-[#1B4820] cursor-pointer"
-            >
-              <option value="ALL">Todos los estados</option>
-              <option value="Activo">Activos</option>
-              <option value="Inactivo">Inactivos</option>
-            </select>
+              options={[
+                { value: 'ALL', label: 'Todos los estados' },
+                { value: 'Activo', label: 'Solo Activos' },
+                { value: 'Inactivo', label: 'Solo Inactivos' }
+              ]}
+            />
           </div>
 
           {/* Reset Filters */}
@@ -591,15 +588,6 @@ function AnimalesContent() {
                           >
                             <Pencil className="w-4 h-4" />
                           </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(animal)}
-                            className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                            title="Eliminar ejemplar"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -642,54 +630,42 @@ function AnimalesContent() {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Sexo
-              </label>
-              <select
+              <Select
+                label="Sexo"
                 value={formData.sex}
-                onChange={(e) => setFormData({ ...formData, sex: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="Hembra">Hembra (Vaca / Novilla / Becerro)</option>
-                <option value="Macho">Macho (Toro / Torete / Becerro)</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, sex: val })}
+                options={[
+                  { value: 'Hembra', label: 'Hembra (Vaca / Novilla / Becerro)' },
+                  { value: 'Macho', label: 'Macho (Toro / Torete / Becerro)' },
+                ]}
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Propietario / Usuario
-              </label>
-              <select
+              <Select
+                label="Propietario / Usuario"
                 value={formData.user_id}
-                onChange={(e) => setFormData({ ...formData, user_id: e.target.value, farm_id: '' })}
-                required
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="" disabled>Selecciona usuario...</option>
-                {users.map(u => (
-                  <option key={u.id} value={u.id}>
-                    {u.name ? `${u.name} (${u.email})` : u.email}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setFormData({ ...formData, user_id: val, farm_id: '' })}
+                placeholder="Selecciona usuario..."
+                options={users.map(u => ({
+                  value: u.id,
+                  label: u.name ? `${u.name} (${u.email})` : u.email
+                }))}
+              />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Finca Asignada (Opcional)
-              </label>
-              <select
+              <Select
+                label="Finca Asignada (Opcional)"
                 value={formData.farm_id}
-                onChange={(e) => setFormData({ ...formData, farm_id: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="">Sin Finca Asignada</option>
-                {modalAvailableFarms.map(f => (
-                  <option key={f.id} value={f.id}>{f.name}</option>
-                ))}
-              </select>
+                onChange={(val) => setFormData({ ...formData, farm_id: val })}
+                options={[
+                  { value: '', label: 'Sin Finca Asignada' },
+                  ...modalAvailableFarms.map(f => ({ value: f.id, label: f.name }))
+                ]}
+              />
             </div>
           </div>
 
@@ -738,17 +714,15 @@ function AnimalesContent() {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Estado
-              </label>
-              <select
+              <Select
+                label="Estado"
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo / Vendido / Muerto</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, status: val })}
+                options={[
+                  { value: 'Activo', label: 'Activo' },
+                  { value: 'Inactivo', label: 'Inactivo / Vendido / Muerto' },
+                ]}
+              />
             </div>
           </div>
 

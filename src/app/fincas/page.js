@@ -20,6 +20,7 @@ import {
   TablePagination,
 } from '@/components/rareui/Table';
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
+import Select from '@/components/rareui/Select';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate } from '@/lib/utils';
 import { sileo } from 'sileo';
@@ -288,36 +289,31 @@ function FincasContent() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-neutral-200/80 shadow-xs">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-2 text-xs font-bold text-neutral-500">
-            <Filter className="w-4 h-4 text-neutral-400" />
-            <span>Propietario:</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-neutral-200/80 shadow-xs">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="w-full sm:w-72">
+            <Select
+              size="sm"
+              value={selectedUserFilter}
+              onChange={(val) => {
+                setSelectedUserFilter(val);
+                setCurrentPage(1);
+              }}
+              options={[
+                { value: 'ALL', label: `Todos los usuarios (${users.length})` },
+                ...users.map(u => ({ value: u.id, label: u.name || u.email }))
+              ]}
+            />
           </div>
-          <select
-            value={selectedUserFilter}
-            onChange={(e) => {
-              setSelectedUserFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="bg-neutral-50 border border-neutral-200 rounded-2xl px-3 py-1.5 text-xs text-neutral-800 font-bold outline-none focus:border-[#1B4820] cursor-pointer max-w-xs truncate"
-          >
-            <option value="ALL">Todos los usuarios ({users.length})</option>
-            {users.map(u => (
-              <option key={u.id} value={u.id}>
-                {u.name || u.email}
-              </option>
-            ))}
-          </select>
 
           {selectedUserFilter !== 'ALL' && (
             <button
               type="button"
               onClick={() => setSelectedUserFilter('ALL')}
-              className="p-1 text-neutral-400 hover:text-neutral-700 rounded-full hover:bg-neutral-100"
+              className="p-2 text-neutral-400 hover:text-neutral-700 rounded-xl hover:bg-neutral-100 transition-colors shrink-0"
               title="Quitar filtro de usuario"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
@@ -478,22 +474,16 @@ function FincasContent() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-              Propietario / Usuario Asignado
-            </label>
-            <select
+            <Select
+              label="Propietario / Usuario Asignado"
               value={formData.user_id}
-              onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
-              required
-              className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-            >
-              <option value="" disabled>Selecciona un usuario...</option>
-              {users.map(u => (
-                <option key={u.id} value={u.id}>
-                  {u.name ? `${u.name} (${u.email})` : u.email}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setFormData({ ...formData, user_id: val })}
+              placeholder="Selecciona un usuario..."
+              options={users.map(u => ({
+                value: u.id,
+                label: u.name ? `${u.name} (${u.email})` : u.email
+              }))}
+            />
           </div>
 
           <div>

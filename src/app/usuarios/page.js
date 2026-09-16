@@ -21,6 +21,8 @@ import {
   TablePagination,
 } from '@/components/rareui/Table';
 import { BoneyardTableSkeleton } from '@/components/ui/BoneyardSkeleton';
+import Select from '@/components/rareui/Select';
+import Switch from '@/components/rareui/Switch';
 import { supabase } from '@/lib/supabaseClient';
 import { hashPassword } from '@/lib/auth';
 import { formatDate } from '@/lib/utils';
@@ -111,9 +113,16 @@ export default function UsuariosPage() {
     }
   }
 
-  // Filtered users
+  // Filtered users (excluding admin)
+  const nonAdminUsers = useMemo(() => {
+    return users.filter(user => 
+      user.role?.toLowerCase() !== 'admin' &&
+      user.email?.toLowerCase() !== 'netgenteam@gmail.com'
+    );
+  }, [users]);
+
   const filteredUsers = useMemo(() => {
-    return users.filter(user => {
+    return nonAdminUsers.filter(user => {
       const matchesSearch = 
         !searchTerm.trim() ||
         (user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase().trim())) ||
@@ -124,7 +133,7 @@ export default function UsuariosPage() {
 
       return matchesSearch && matchesStatus;
     });
-  }, [users, searchTerm, statusFilter]);
+  }, [nonAdminUsers, searchTerm, statusFilter]);
 
   // Paginated slice
   const paginatedUsers = useMemo(() => {
@@ -307,9 +316,9 @@ export default function UsuariosPage() {
   }
 
   const statusTabs = [
-    { id: 'ALL', label: 'Todos', count: users.length },
-    { id: 'Activo', label: 'Activos', count: users.filter(u => u.status === 'Activo').length },
-    { id: 'Inactivo', label: 'Inactivos', count: users.filter(u => u.status === 'Inactivo').length },
+    { id: 'ALL', label: 'Todos', count: nonAdminUsers.length },
+    { id: 'Activo', label: 'Activos', count: nonAdminUsers.filter(u => u.status === 'Activo').length },
+    { id: 'Inactivo', label: 'Inactivos', count: nonAdminUsers.filter(u => u.status === 'Inactivo').length },
   ];
 
   return (
@@ -410,23 +419,21 @@ export default function UsuariosPage() {
                       {/* Role */}
                       <TableCell>
                         <Badge
-                          variant={user.role === 'admin' ? 'primary' : user.role === 'veterinario' ? 'info' : 'neutral'}
+                          variant={user.role === 'admin' ? 'primary' : 'neutral'}
                           size="sm"
                         >
-                          {user.role || 'operador'}
+                          {user.role === 'admin' ? 'Administrador' : 'Operador'}
                         </Badge>
                       </TableCell>
 
-                      {/* Status */}
+                      {/* Status Switch */}
                       <TableCell>
-                        <Badge
-                          variant={isActive ? 'success' : 'danger'}
+                        <Switch
+                          checked={isActive}
+                          onChange={() => handleToggleStatus(user)}
                           size="sm"
-                          dot
-                          pulse={isActive}
-                        >
-                          {user.status}
-                        </Badge>
+                          label={user.status}
+                        />
                       </TableCell>
 
                       {/* Farms count */}
@@ -477,20 +484,6 @@ export default function UsuariosPage() {
                             title="Editar usuario"
                           >
                             <Pencil className="w-4 h-4" />
-                          </button>
-
-                          {/* Disable / Enable toggle */}
-                          <button
-                            type="button"
-                            onClick={() => handleToggleStatus(user)}
-                            className={`p-2 rounded-xl transition-colors cursor-pointer ${
-                              isActive
-                                ? 'text-rose-600 hover:bg-rose-50'
-                                : 'text-emerald-600 hover:bg-emerald-50'
-                            }`}
-                            title={isActive ? 'Deshabilitar cuenta' : 'Habilitar cuenta'}
-                          >
-                            <Power className="w-4 h-4" />
                           </button>
                         </div>
                       </TableCell>
@@ -580,33 +573,27 @@ export default function UsuariosPage() {
           {/* Grid Role & Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Rol en el Sistema
-              </label>
-              <select
+              <Select
+                label="Rol en el Sistema"
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="operador">Operador de Campo</option>
-                <option value="veterinario">Veterinario</option>
-                <option value="admin">Administrador</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, role: val })}
+                options={[
+                  { value: 'operador', label: 'Operador' },
+                  { value: 'admin', label: 'Administrador' },
+                ]}
+              />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Estado de la Cuenta
-              </label>
-              <select
+              <Select
+                label="Estado de la Cuenta"
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo / Deshabilitado</option>
-                <option value="Suspendido">Suspendido</option>
-              </select>
+                onChange={(val) => setFormData({ ...formData, status: val })}
+                options={[
+                  { value: 'Activo', label: 'Activo' },
+                  { value: 'Inactivo', label: 'Inactivo / Deshabilitado' },
+                ]}
+              />
             </div>
           </div>
 

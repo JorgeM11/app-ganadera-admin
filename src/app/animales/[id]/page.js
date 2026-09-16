@@ -19,6 +19,7 @@ import {
   TableEmpty,
 } from '@/components/rareui/Table';
 import { BoneyardDetailsSkeleton } from '@/components/ui/BoneyardSkeleton';
+import Select from '@/components/rareui/Select';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, calculateAge, formatWeight } from '@/lib/utils';
 import { sileo } from 'sileo';
@@ -954,51 +955,38 @@ export default function AnimalDetailPage({ params }) {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Sexo
-              </label>
-              <select
+              <Select
+                label="Sexo"
                 value={editFormData.sex || 'Hembra'}
-                onChange={(e) => setEditFormData({ ...editFormData, sex: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="Hembra">Hembra</option>
-                <option value="Macho">Macho</option>
-              </select>
+                onChange={(val) => setEditFormData({ ...editFormData, sex: val })}
+                options={[
+                  { value: 'Hembra', label: 'Hembra' },
+                  { value: 'Macho', label: 'Macho' }
+                ]}
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Propietario
-              </label>
-              <select
+              <Select
+                label="Propietario"
                 value={editFormData.user_id || ''}
-                onChange={(e) => setEditFormData({ ...editFormData, user_id: e.target.value })}
-                required
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                {usersList.map(u => (
-                  <option key={u.id} value={u.id}>{u.name || u.email}</option>
-                ))}
-              </select>
+                onChange={(val) => setEditFormData({ ...editFormData, user_id: val })}
+                options={usersList.map(u => ({ value: u.id, label: u.name || u.email }))}
+              />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Finca
-              </label>
-              <select
+              <Select
+                label="Finca"
                 value={editFormData.farm_id || ''}
-                onChange={(e) => setEditFormData({ ...editFormData, farm_id: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="">Sin Finca Asignada</option>
-                {farmsList.map(f => (
-                  <option key={f.id} value={f.id}>{f.name}</option>
-                ))}
-              </select>
+                onChange={(val) => setEditFormData({ ...editFormData, farm_id: val })}
+                options={[
+                  { value: '', label: 'Sin Finca Asignada' },
+                  ...farmsList.map(f => ({ value: f.id, label: f.name }))
+                ]}
+              />
             </div>
           </div>
 
@@ -1043,17 +1031,15 @@ export default function AnimalDetailPage({ params }) {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">
-                Estado
-              </label>
-              <select
+              <Select
+                label="Estado"
                 value={editFormData.status || 'Activo'}
-                onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
-                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3.5 py-2.5 text-sm text-neutral-800 font-bold outline-none focus:border-[#1B4820] focus:bg-white transition-all cursor-pointer"
-              >
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo / Vendido / Muerto</option>
-              </select>
+                onChange={(val) => setEditFormData({ ...editFormData, status: val })}
+                options={[
+                  { value: 'Activo', label: 'Activo' },
+                  { value: 'Inactivo', label: 'Inactivo / Vendido / Muerto' },
+                ]}
+              />
             </div>
           </div>
 
@@ -1097,15 +1083,19 @@ export default function AnimalDetailPage({ params }) {
         <form onSubmit={handleSaveGrowthEvent} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Tipo de Evento</label>
-              <select name="event_type" defaultValue={eventModal.data?.event_type || 'Pesaje'} className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3 py-2 text-sm">
-                <option value="Nacimiento">Nacimiento</option>
-                <option value="Destete">Destete</option>
-                <option value="Peso a los 12 meses">Peso a los 12 meses</option>
-                <option value="Peso a los 18 meses">Peso a los 18 meses</option>
-                <option value="Pesaje">Pesaje Periódico</option>
-                <option value="Otro">Otro</option>
-              </select>
+              <Select
+                label="Tipo de Evento"
+                name="event_type"
+                defaultValue={eventModal.data?.event_type || 'Pesaje'}
+                options={[
+                  { value: 'Nacimiento', label: 'Nacimiento' },
+                  { value: 'Destete', label: 'Destete' },
+                  { value: 'Peso a los 12 meses', label: 'Peso a los 12 meses' },
+                  { value: 'Peso a los 18 meses', label: 'Peso a los 18 meses' },
+                  { value: 'Pesaje', label: 'Pesaje Periódico' },
+                  { value: 'Otro', label: 'Otro' },
+                ]}
+              />
             </div>
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Fecha</label>
@@ -1149,13 +1139,17 @@ export default function AnimalDetailPage({ params }) {
         <form onSubmit={handleSaveHealthRecord} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Categoría</label>
-              <select name="product_type" defaultValue={healthModal.data?.product_type || 'Vacuna'} className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3 py-2 text-sm">
-                <option value="Vacuna">Vacuna</option>
-                <option value="Desparasitante">Desparasitante</option>
-                <option value="Vitamina">Vitamina</option>
-                <option value="Antibiótico">Antibiótico</option>
-              </select>
+              <Select
+                label="Categoría"
+                name="product_type"
+                defaultValue={healthModal.data?.product_type || 'Vacuna'}
+                options={[
+                  { value: 'Vacuna', label: 'Vacuna' },
+                  { value: 'Desparasitante', label: 'Desparasitante' },
+                  { value: 'Vitamina', label: 'Vitamina' },
+                  { value: 'Antibiótico', label: 'Antibiótico' },
+                ]}
+              />
             </div>
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Fecha</label>
@@ -1194,12 +1188,16 @@ export default function AnimalDetailPage({ params }) {
               <input type="date" name="milking_date" defaultValue={milkingModal.data?.milking_date || new Date().toISOString().split('T')[0]} required className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Turno</label>
-              <select name="shift" defaultValue={milkingModal.data?.shift || 'Mañana'} className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl px-3 py-2 text-sm">
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Único">Único</option>
-              </select>
+              <Select
+                label="Turno"
+                name="shift"
+                defaultValue={milkingModal.data?.shift || 'Mañana'}
+                options={[
+                  { value: 'Mañana', label: 'Mañana' },
+                  { value: 'Tarde', label: 'Tarde' },
+                  { value: 'Único', label: 'Único' },
+                ]}
+              />
             </div>
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Litros</label>

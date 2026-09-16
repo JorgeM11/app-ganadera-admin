@@ -70,3 +70,27 @@ body {
 .glow-subtle {
   box-shadow: 0 10px 30px -10px rgba(27, 72, 32, 0.08);
 }
+
+/* High-Contrast Sileo Toast Custom Styles */
+[data-sileo-viewport] [data-sileo-toast] {
+  filter: drop-shadow(0 16px 36px rgba(5, 20, 8, 0.45)) !important;
+}
+
+[data-sileo-viewport] [data-sileo-title] {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 0.875rem !important;
+  letter-spacing: -0.01em;
+}
+
+[data-sileo-viewport] [data-sileo-description] {
+  color: #e2e8f0 !important;
+  font-weight: 500 !important;
+  font-size: 0.825rem !important;
+  line-height: 1.35 !important;
+}
+
+[data-sileo-badge] {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+

@@ -59,16 +59,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleUseDemoAdmin = () => {
-    setEmail('netgenteam@gmail.com');
-    setPassword('net.gen');
-    setError('');
-    sileo.info({ 
-      title: 'Credenciales de Admin Cargadas', 
-      description: 'netgenteam@gmail.com / net.gen' 
-    });
-  };
-
   return (
     <div className="min-h-screen w-full bg-[#F6F8F4] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-hidden">
       {/* Subtle glowing orbs */}
@@ -113,7 +103,7 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="netgenteam@gmail.com"
+                  placeholder="admin@campo.com"
                   autoComplete="email"
                   required
                   className="w-full bg-transparent outline-none text-sm text-neutral-800 font-medium placeholder:text-neutral-400"
@@ -164,18 +154,6 @@ export default function LoginPage() {
               <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
-
-          {/* Quick Admin Credentials Helper */}
-          <div className="mt-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-xs">
-            <span className="text-neutral-400 font-medium">¿Cuenta admin configurada?</span>
-            <button
-              type="button"
-              onClick={handleUseDemoAdmin}
-              className="text-[#1B4820] font-bold hover:underline cursor-pointer"
-            >
-              Usar netgenteam@gmail.com
-            </button>
-          </div>
         </div>
       </motion.div>
     </div>

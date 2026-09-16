@@ -54,20 +54,6 @@ export default function AdminSidebar({ onCloseMobile }) {
           </div>
         </div>
 
-        {/* Live system status pill */}
-        <div className="px-5 pt-4 pb-2">
-          <div className="flex items-center justify-between px-3 py-2 rounded-2xl bg-neutral-50 border border-neutral-200/70 text-xs">
-            <span className="text-[11px] font-bold text-neutral-500 flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-              </span>
-              Supabase Cloud
-            </span>
-            <Badge variant="success" size="sm">Conectado</Badge>
-          </div>
-        </div>
-
         {/* Navigation Menu */}
         <nav className="p-4 space-y-1.5">
           <p className="text-[10px] font-black uppercase tracking-wider text-neutral-400 px-3 py-1">

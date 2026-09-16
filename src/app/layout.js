@@ -13,7 +13,14 @@ export default function RootLayout({ children }) {
     <html lang="es" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-[#F6F8F4] text-[#141713]">
         <AuthProvider>
-          <Toaster position="top-right" />
+          <Toaster
+            position="top-right"
+            theme="light"
+            options={{
+              fill: '#143416',
+              roundness: 18,
+            }}
+          />
           {children}
         </AuthProvider>
       </body>

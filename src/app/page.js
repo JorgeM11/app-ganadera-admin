@@ -90,10 +90,11 @@ export default function DashboardPage() {
       const totalLiters = milking.reduce((acc, r) => acc + (Number(r.liters) || 0), 0);
       const activeAnimals = animals.filter(a => a.status === 'Activo').length;
       const femaleCows = animals.filter(a => a.sex === 'Hembra').length;
-      const activeUsersCount = users.filter(u => u.status === 'Activo').length;
+      const nonAdminUsers = users.filter(u => u.role?.toLowerCase() !== 'admin' && u.email?.toLowerCase() !== 'netgenteam@gmail.com');
+      const activeUsersCount = nonAdminUsers.filter(u => u.status === 'Activo').length;
 
       setStats({
-        usersCount: users.length,
+        usersCount: nonAdminUsers.length,
         activeUsersCount,
         farmsCount: farms.length,
         animalsCount: animals.length,
@@ -103,7 +104,7 @@ export default function DashboardPage() {
         healthRecordsCount: health.length,
       });
 
-      setRecentUsers(users.slice(0, 5));
+      setRecentUsers(nonAdminUsers.slice(0, 5));
       setRecentAnimals(animals.slice(0, 5));
     } catch (err) {
       console.error('Error cargando métricas del dashboard:', err);
