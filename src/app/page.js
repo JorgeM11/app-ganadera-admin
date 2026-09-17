@@ -120,7 +120,7 @@ export default function DashboardPage() {
       <div className="relative overflow-hidden bg-gradient-to-r from-[#173418] to-[#255227] rounded-3xl p-6 sm:p-8 text-white shadow-lg shadow-[#1B4820]/15">
         <div className="relative z-10 max-w-2xl space-y-2">
           <Badge variant="primary" size="sm" className="bg-white/15 text-emerald-200 border-white/20">
-            Control Administrativo Maestro
+            Control Administrativo
           </Badge>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
             Panel de Control Central

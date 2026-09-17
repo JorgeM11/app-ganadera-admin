@@ -29,7 +29,7 @@ export default function AdminNavbar({ onOpenMobileMenu, title = 'Panel Administr
 
       <div className="flex items-center gap-3">
         <Badge variant="primary" size="sm" dot pulse>
-          Modo Admin Activo
+          Sistema Administrativo
         </Badge>
 
         <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-neutral-200 text-xs text-neutral-500 font-medium">
